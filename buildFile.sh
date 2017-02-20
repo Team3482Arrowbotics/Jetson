@@ -1,0 +1,1 @@
+g++ $1 -pthread -L. -lopencv_highgui -lopencv_core -lopencv_imgproc -l ntcore -l wpiutil -I /home/ubuntu/cameraTest/ntcore-3.1.6/include -I /home/ubuntu/cameraTest/ntcore-3.1.6/wpiutil/include/ -std=c++11 -o $2
