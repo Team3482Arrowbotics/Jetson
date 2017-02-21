@@ -75,7 +75,7 @@ int main(int argc, char* argv[]){
 	   
 	    string imgName = name + "/outImg" + to_string(fileNum) + ".jpg";
 	    string BGRName = name + "/outBGR" + to_string(fileNum) + ".jpg";
-	    string HSVName = name + "/outImg" + to_string(fileNum) + ".jpg";
+	    string HSVName = name + "/outHSV" + to_string(fileNum) + ".jpg";
 	    imwrite(imgName, frame);
 	    imwrite(BGRName, BGRThresholded);
 	    imwrite(HSVName, HSV);
