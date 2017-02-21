@@ -10,7 +10,8 @@ using namespace std;
 
 vector<vector<Point> > contours;
 vector<Rect> filteredContourRectangles;
-string netIP = "roboRIO-3482-frc.local";
+
+int centerDelta = -25565;
 
 int lowH = 32;
 int lowS = 0;
@@ -27,9 +28,10 @@ int highB = 73;
 
 int main(){
     //Instantiate camera
-    VideoCapture cap("roboRIO-3482-frc.local:1181/?action=stream");
+    VideoCapture cap("http://roboRIO-3482-frc.local:1181/?action=stream");
     if(!cap.isOpened()){
         cout << "Could not instantiate shooter camera" << endl;
+	return 0;
     }
     
     //NetworkTables setup
@@ -45,8 +47,8 @@ int main(){
 	if(!hasFrame){
 	    cout << "Camera cannot read frame" << endl;
 	} else{
-	    double dWidth = cap.get(CV_CAP_PROP_FRAME_WIDTH);
-	    double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+	    //double dWidth = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+	    //double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 	    cvtColor(frame, HSV, COLOR_BGR2HSV);
 	    inRange(HSV, Scalar(lowH, lowS, lowV), Scalar(highH, highS, highV), HSVThresholded);
 	    findContours(HSVThresholded, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
@@ -56,9 +58,18 @@ int main(){
 		    filteredContourRectangles.push_back(r);
 		}
 	    }
-	    int centerDelta = 320 - (filteredContourRectangles[0].x + filteredContourRectangles[0].width/2);
+	    if(filteredContourRectangles.size() > 0){
+	        centerDelta = 320 - (filteredContourRectangles[0].x + filteredContourRectangles[0].width/2);
+	    }
 	    table->PutNumber("centerDelta", centerDelta);
-	    table->PutBoolean("centered", centerDelta <= 20);
+	    table->PutBoolean("centered", abs(centerDelta) <= 20);
+	    filteredContourRectangles.clear();
+	    centerDelta = -25565;
 	}
+	if(waitKey(30) == 27){
+            cout << "esc key pressed by user" << endl;
+            break;
+        }
+
     }
 }
